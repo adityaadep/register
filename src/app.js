@@ -1,3 +1,5 @@
+
+require('dotenv').config()
 const express=require("express");
 const path=require("path");
 const bcrypt=require("bcryptjs");
@@ -21,6 +23,10 @@ app.set("views",templatePath);
 
 hbs.registerPartials(partial_path);
 //console.log(path.join(__dirname,"../public"))
+
+console.log(process.env.SECRET_KEY);
+
+
 app.get("/",(req,res)=>{
     res.render("index");
 })
@@ -52,7 +58,11 @@ app.post("/register",async(req,res)=>{
 //using bcryptjs 
 //middleware
 
+            const token=await registerEmployee.generateAuthToken();
+            console.log(token);
+
             const registered=await registerEmployee.save();
+            console.log(registered)
             res.status(201).render("index");
 
         }else{
@@ -84,6 +94,10 @@ app.post("/login",async(req,res)=>{
 
         const isMatch=await bcrypt.compare(password,useremail.password);
 
+        
+        const token=await useremail.generateAuthToken();
+        console.log(token);
+
 
         if(isMatch){
             res.status(201).render("index")
@@ -102,18 +116,18 @@ app.post("/login",async(req,res)=>{
 })
 
 
-const jwt=require("jsonwebtoken");
+// const jwt=require("jsonwebtoken");
 
-const createToken=async()=>{
-   const Token=await jwt.sign({_id:"616adabfa42ddae59295132d"},"mynameisadityaadepvcogsdigitalmedia");
-console.log(Token);
+// const createToken=async()=>{
+//    const Token=await jwt.sign({_id:"616adabfa42ddae59295132d"},"mynameisadityaadepvcogsdigitalmedia");
+// console.log(Token);
 
-const userVerify=await jwt.verify(Token,"mynameisadityaadepvcogsdigitalmedia");
+// const userVerify=await jwt.verify(Token,"mynameisadityaadepvcogsdigitalmedia");
 
-console.log(userVerify)
-}
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTZhZGFiZmE0MmRkYWU1OTI5NTEzMmQiLCJpYXQiOjE2MzQzOTQzNjl9.EF7REEmv5G6OEkGFODHyrSITDKN1flo8IGdPiMAokKg
-createToken()
+// console.log(userVerify)
+// }
+// //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTZhZGFiZmE0MmRkYWU1OTI5NTEzMmQiLCJpYXQiOjE2MzQzOTQzNjl9.EF7REEmv5G6OEkGFODHyrSITDKN1flo8IGdPiMAokKg
+// createToken()
 
 
 
